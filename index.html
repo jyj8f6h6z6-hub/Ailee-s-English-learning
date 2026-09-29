@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>英文單字大挑戰</title>
+<style>
+:root{--bg:#fff8e8;--card:#fff;--ink:#24324a;--muted:#718096;--accent:#6c63ff;--accent2:#ffb84d;--ok:#20a464;--bad:#e85b5b;--key:#f1f4f9;--shadow:0 12px 30px rgba(36,50,74,.12)}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif;background:radial-gradient(circle at top,#fff3c4 0,#fff8e8 36%,#f5f7ff 100%);color:var(--ink);min-height:100vh}
+button{font:inherit}.app{width:min(760px,100%);margin:auto;padding:18px 14px 32px}.top{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}.pill{background:#fff;border-radius:999px;padding:9px 13px;box-shadow:0 5px 16px rgba(36,50,74,.08);font-weight:800;font-size:14px}.brand{font-size:21px;font-weight:1000;letter-spacing:.5px}.card{background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.7);border-radius:28px;padding:24px 18px 20px;box-shadow:var(--shadow);text-align:center}.label{color:var(--muted);font-size:14px;font-weight:800}.question{font-size:clamp(34px,9vw,54px);font-weight:1000;margin:7px 0 16px}.answer{min-height:60px;display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;margin:5px 0 10px}.slot{min-width:26px;height:43px;border-bottom:4px solid #cbd3df;display:flex;align-items:center;justify-content:center;font-size:27px;font-weight:1000;text-transform:uppercase}.slot.space{border:0;min-width:13px}.slot.filled{border-color:var(--accent)}.feedback{height:30px;font-size:18px;font-weight:900;margin:8px 0 4px}.feedback.ok{color:var(--ok)}.feedback.bad{color:var(--bad)}.progress{height:11px;background:#e9edf4;border-radius:999px;overflow:hidden;margin:0 0 14px}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#9c7cff);transition:width .25s ease}.keyboard{margin-top:17px;display:flex;flex-direction:column;gap:8px;user-select:none}.row{display:flex;justify-content:center;gap:6px}.key{border:0;background:var(--key);color:var(--ink);border-radius:12px;min-width:0;flex:1;max-width:58px;height:50px;font-size:19px;font-weight:1000;box-shadow:0 3px 0 #d8deea;cursor:pointer;touch-action:manipulation}.key:active{transform:translateY(2px);box-shadow:0 1px 0 #d8deea}.key.special{max-width:92px;background:#e5e2ff;color:#4e46c7}.actions{display:flex;justify-content:center;gap:10px;margin-top:15px}.action{border:0;border-radius:14px;padding:11px 16px;font-weight:900;cursor:pointer}.hint{background:#fff0c8;color:#8b5c00}.restart{background:#eceff5;color:#526071}.start{background:var(--accent);color:#fff;padding:15px 28px;font-size:18px}.screen{display:none}.screen.active{display:block}.intro{padding:34px 20px}.intro .mascot{font-size:62px}.intro h1{margin:7px 0 8px;font-size:34px}.intro p{color:var(--muted);line-height:1.7;margin:0 auto 20px;max-width:520px}.result-score{font-size:56px;font-weight:1000;color:var(--accent);margin:8px}.stars{font-size:38px;letter-spacing:4px}.small{font-size:13px;color:var(--muted);margin-top:12px}.shake{animation:shake .25s linear}.pop{animation:pop .3s ease}@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}@keyframes pop{50%{transform:scale(1.04)}}
+@media(max-width:420px){.app{padding:10px 8px 24px}.card{border-radius:22px;padding:18px 9px}.top{gap:5px}.pill{padding:7px 9px;font-size:12px}.brand{font-size:17px}.row{gap:4px}.key{height:47px;font-size:17px;border-radius:10px}.slot{min-width:21px;height:38px;font-size:23px;gap:4px}.answer{gap:5px}.question{margin-bottom:11px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<section id="startScreen" class="screen active card intro">
+  <div class="mascot">🎮📚</div><h1>英文單字大挑戰</h1>
+  <p>看中文，用下面的英文字母鍵盤一個一個拼出答案。答錯的單字之後會更容易再出現！</p>
+  <button id="startBtn" class="action start">開始挑戰 🚀</button>
+  <div class="small">目前題庫：21 個單字｜每回合 10 題</div>
+</section>
+
+<section id="gameScreen" class="screen">
+  <div class="top">
+    <div class="brand">⚡ 單字挑戰</div>
+    <div class="pill">⭐ <span id="score">0</span></div>
+    <div class="pill">🔥 <span id="combo">0</span></div>
+    <div class="pill"><span id="counter">1 / 10</span></div>
+  </div>
+  <div class="progress"><div id="progressBar"></div></div>
+  <div id="gameCard" class="card">
+    <div class="label">請拼出英文</div>
+    <div id="question" class="question">薯條</div>
+    <div id="answer" class="answer" aria-label="目前答案"></div>
+    <div id="feedback" class="feedback" aria-live="polite"></div>
+    <div id="keyboard" class="keyboard"></div>
+    <div class="actions">
+      <button id="hintBtn" class="action hint">💡 提示</button>
+      <button id="restartBtn" class="action restart">↻ 重新開始</button>
+    </div>
+  </div>
+</section>
+
+<section id="resultScreen" class="screen card intro">
+  <div class="mascot">🏆</div><h1>挑戰完成！</h1>
+  <div id="stars" class="stars">⭐⭐⭐</div>
+  <div id="finalScore" class="result-score">0</div>
+  <p id="resultText">太棒了！</p>
+  <button id="againBtn" class="action start">再玩一次 🔄</button>
+</section>
+</main>
+<script>
+// ===== 題庫：之後新增單字，只要在這裡加一行 =====
+const WORD_BANK = [
+  {zh:'薯條', en:'French fries'}, {zh:'三明治', en:'sandwich'}, {zh:'湯', en:'soup'},
+  {zh:'消費者', en:'consumer'}, {zh:'醬汁', en:'sauce'}, {zh:'片／切片', en:'slice'},
+  {zh:'出名的', en:'famous'}, {zh:'麵團', en:'dough'}, {zh:'九層塔', en:'basil'},
+  {zh:'首先', en:'first'}, {zh:'下一個', en:'next'}, {zh:'然後', en:'then'},
+  {zh:'起司', en:'cheese'}, {zh:'漢堡', en:'hamburger'}, {zh:'水餃', en:'dumpling'},
+  {zh:'批發商', en:'wholesaler'}, {zh:'送貨', en:'deliver'}, {zh:'農場', en:'farm'},
+  {zh:'牛排', en:'steak'}, {zh:'麵條', en:'noodles'}, {zh:'好', en:'good'}
+];
+const ROUND_SIZE = 10;
+const rows = ['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+const $ = s => document.querySelector(s);
+let queue=[], current=null, typed='', score=0, combo=0, answered=0, mistakes={}, locked=false, hintUsed=false;
+function normalize(s){return s.toLowerCase().replace(/[^a-z]/g,'')}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active')}
+function buildKeyboard(){const k=$('#keyboard');k.innerHTML='';rows.forEach((letters,ri)=>{const row=document.createElement('div');row.className='row';[...letters].forEach(ch=>{const b=document.createElement('button');b.type='button';b.className='key';b.textContent=ch;b.addEventListener('click',()=>press(ch));row.appendChild(b)});if(ri===2){const b=document.createElement('button');b.type='button';b.className='key special';b.textContent='⌫';b.setAttribute('aria-label','刪除');b.addEventListener('click',backspace);row.appendChild(b)}k.appendChild(row)})}
+function startGame(){score=0;combo=0;answered=0;mistakes={};queue=shuffle([...WORD_BANK]).slice(0,ROUND_SIZE);updateTop();show('#gameScreen');nextQuestion()}
+function nextQuestion(){if(answered>=ROUND_SIZE){finish();return}if(queue.length===0) queue=shuffle([...WORD_BANK]);current=queue.shift();typed='';locked=false;hintUsed=false;$('#feedback').textContent='';$('#feedback').className='feedback';$('#question').textContent=current.zh;renderAnswer();updateTop()}
+function renderAnswer(){const answer=current.en.toUpperCase();let letterIndex=0;$('#answer').innerHTML='';[...answer].forEach(ch=>{const s=document.createElement('span');if(ch===' '){s.className='slot space';s.textContent=' ';}else{const val=typed[letterIndex]||'';s.className='slot'+(val?' filled':'');s.textContent=val;letterIndex++}$('#answer').appendChild(s)})}
+function press(ch){if(locked)return;const target=normalize(current.en).toUpperCase();if(typed.length>=target.length)return;const expected=target[typed.length];if(ch===expected){typed+=ch;renderAnswer();if(typed.length===target.length) correct()}else{mistakes[current.en]=(mistakes[current.en]||0)+1;combo=0;updateTop();$('#feedback').textContent='再試一次 💪';$('#feedback').className='feedback bad';const card=$('#gameCard');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake')}}
+function backspace(){if(locked||!typed)return;typed=typed.slice(0,-1);renderAnswer();$('#feedback').textContent=''}
+function correct(){locked=true;combo++;score+=Math.max(5,10+(combo-1)*2-(hintUsed?3:0));$('#feedback').textContent=combo>=3?`答對了！🔥 ${combo} Combo`:'答對了！🎉';$('#feedback').className='feedback ok';$('#gameCard').classList.add('pop');updateTop();answered++;setTimeout(()=>{$('#gameCard').classList.remove('pop');nextQuestion()},850)}
+function hint(){if(locked)return;const target=normalize(current.en).toUpperCase();if(typed.length>=target.length)return;hintUsed=true;typed+=target[typed.length];renderAnswer();$('#feedback').textContent='提示了一個字母 💡';$('#feedback').className='feedback';if(typed.length===target.length)correct()}
+function updateTop(){$('#score').textContent=score;$('#combo').textContent=combo;$('#counter').textContent=`${Math.min(answered+1,ROUND_SIZE)} / ${ROUND_SIZE}`;$('#progressBar').style.width=`${answered/ROUND_SIZE*100}%`}
+function finish(){show('#resultScreen');$('#finalScore').textContent=score+' 分';let stars=score>=120?'⭐⭐⭐':score>=80?'⭐⭐':'⭐';$('#stars').textContent=stars;$('#resultText').textContent=score>=120?'超強！拼字高手！':score>=80?'很棒！再玩一次會更厲害！':'完成挑戰了！把不熟的再練一次吧！'}
+$('#startBtn').addEventListener('click',startGame);$('#againBtn').addEventListener('click',startGame);$('#restartBtn').addEventListener('click',startGame);$('#hintBtn').addEventListener('click',hint);buildKeyboard();
+</script>
+</body>
+</html>
